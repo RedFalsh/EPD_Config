@@ -1,0 +1,24 @@
+<RCC>
+  <qresource prefix="white_blue">
+    <file>style.qss</file>
+    <file>img/018.png</file>
+    <file>img/add-line_horizontal.png</file>
+    <file>img/add-line_vertical.png</file>
+    <file>img/array_down.png</file>
+    <file>img/check.png</file>
+    <file>img/checkbox_checked.png</file>
+    <file>img/checkbox_unchecked.png</file>
+    <file>img/delete1.png</file>
+    <file>img/delete11.png</file>
+    <file>img/info.png</file>
+    <file>img/nuke.png</file>
+    <file>img/question.png</file>
+    <file>img/radiation.bmp</file>
+    <file>img/radiation.png</file>
+    <file>img/radio_normal.png</file>
+    <file>img/radio_selected.png</file>
+    <file>img/sign-error-icon.png</file>
+    <file>img/sub-line_horizontal.png</file>
+    <file>img/sub-line_vertical.png</file>
+  </qresource>
+</RCC>
