@@ -9,7 +9,7 @@ class cxFreeze:
         build = "build"
         bdist_msi = "bdist_msi"
         print(path)
-        os.system('python %s\cx_setup.py %s'%(path,bdist_msi))
+        os.system('python %s\cx_setup.py %s'%(build))
 
 tool = cxFreeze()
 tool.runcmd()

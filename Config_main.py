@@ -9,22 +9,29 @@ import time
 import serial.tools.list_ports
 import binascii
 
-from pyqtUI.Config_main_ui1 import Ui_Dialog
-
+# from pyqtUI.Config_main_ui1 import Ui_Dialog
+from pyqtUI.main import Ui_MainWindow
 from INF_HELPER import inf_helper
 from my_serial import SerialHelper
 
-class mywindow(QDialog , Ui_Dialog):
+class mywindow(QMainWindow , Ui_MainWindow):
     def __init__(self,qApp):
         super(mywindow,self).__init__()
         self.setupUi(self)
         self.qApp=qApp
 
+
+        icon = QIcon()
+        import os
+        path = os.getcwd()
+        icon.addPixmap(QPixmap("%s/app.ico"%path),QIcon.Normal, QIcon.Off)
+        self.setWindowIcon(icon)
+
         import pyqtcss.white_blue
         self.setStyleSheet(pyqtcss.white_blue.load_stylesheet_pyqt5())#加载css格式
 
-        self.StyleInit()
-        self.IconInit()
+        # self.StyleInit()
+        # self.IconInit()
 
         self.UpdateSerialShow()
         self.pushButton_UpdateSerialShow.clicked.connect(self.UpdateSerialShow)
@@ -75,7 +82,7 @@ class mywindow(QDialog , Ui_Dialog):
             'IntervalTime': '080B00',
             'TunnelBigRead':'080C00',
             'TunnelSmallRead': '080C01',}
-        
+
         self.Inf_Str = ""
         'xxxxxxxxxxxxxxxxxx 0 start 1 len  2 epdnum   3usernum  4ntnum 5cpunum 6equ 7cmd cld 8d   9 crc 10end'
         self.Inf_CmdList = ['AA55','0000','00000000','00000000','0000','0000','00','000000','00','0000','BB66']
@@ -262,13 +269,13 @@ class mywindow(QDialog , Ui_Dialog):
             try:
                 self.ser = SerialHelper(Port = port,BaudRate="9600",ByteSize="8",Parity="N",Stopbits="1",Dtr=True,Rts=True)
                 self.ser.start()
+                self.ser.alive = True
                 if self.ser.alive:
                     '''串口打开成功要打开串口接收线程'''
-
                     self.timer_read.start(100)
                     self.timerWork.start(100)
                     self.comboBox_ComNum.setEnabled(False)
-                    self.pushButton_UpdateSerialShow.setEnabled(False)
+                    # self.pushButton_UpdateSerialShow.setEnabled(False)
                     self.pushButton_OpenSerial.setText("关闭串口")
             except Exception as e:
                 QMessageBox.warning(self,"错误",logging.error(e),QMessageBox.Yes)
@@ -516,10 +523,10 @@ class mywindow(QDialog , Ui_Dialog):
             self.lineEdit_24.setText(InformationList[3])
             self.lineEdit_25.setText(InformationList[4])
             self.lineEdit_26.setText(InformationList[5])
-            self.lineEdit_27.setText(InformationList[6])
-            self.lineEdit_28.setText(InformationList[7])
-            self.lineEdit_29.setText(InformationList[8])
-            self.lineEdit_30.setText(InformationList[9])
+            # self.lineEdit_27.setText(InformationList[6])
+            # self.lineEdit_28.setText(InformationList[7])
+            # self.lineEdit_29.setText(InformationList[8])
+            # self.lineEdit_30.setText(InformationList[9])
 
 import sys
 app = QApplication(sys.argv)
