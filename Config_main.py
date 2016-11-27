@@ -13,7 +13,7 @@ import binascii
 from pyqtUI.main import Ui_MainWindow
 from INF_HELPER import inf_helper
 from my_serial import SerialHelper
-
+import xlrd
 class mywindow(QMainWindow , Ui_MainWindow):
     def __init__(self,qApp):
         super(mywindow,self).__init__()
