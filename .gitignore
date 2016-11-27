@@ -1,0 +1,19 @@
+# Python compiled files
+*.py[ocd]
+__pychche__/
+.idea/
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+
+# Sphinx
+_build/
+_generate/
+_static/
+_templates/
+
+# OS X
+.DS_Store
