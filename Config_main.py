@@ -16,6 +16,8 @@ from my_serial import SerialHelper
 import xlrd
 import queue
 
+import xdrlib
+
 
 class mywindow(QMainWindow , Ui_MainWindow):
     def __init__(self,qApp):
