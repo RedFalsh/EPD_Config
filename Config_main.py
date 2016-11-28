@@ -88,7 +88,8 @@ class mywindow(QMainWindow , Ui_MainWindow):
             self.lineEdit_W_InstrumentDate,
             self.lineEdit_W_IntervalTime,
             self.lineEdit_W_DoseThreshold,
-            self.lineEdit_W_DoseRateThreshold
+            self.lineEdit_W_DoseRateThreshold,
+            self.lineEdit_W_CumulativeDoseReset
         ]
         self.lineEdit_R = [
             self.lineEdit_R_InstrumentNumber,
