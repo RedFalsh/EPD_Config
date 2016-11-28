@@ -9,6 +9,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QVBoxLayout, QSize
 
 from numpy import arange, sin, pi
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+
 from matplotlib.figure import Figure
 # from matplotlib.pyplot import as plt
 
@@ -18,20 +20,18 @@ class MyMplCanvas(FigureCanvas):
     def __init__(self, parent=None):
         self.fig = Figure()
         # self.fig = plt.figure()
-        self.axes = self.fig.add_subplot(1,1,1,xlim=(0,100),ylim=(0,100))
+        self.axes = self.fig.add_subplot(111)
         # 每次plot()调用的时候，我们希望原来的坐标轴被清除(所以False)
         self.axes.hold(False)
-        self.draw_me()
+        self.draw_Init()
         #
         FigureCanvas.__init__(self, self.fig)
         self.setParent(parent)
-        FigureCanvas.setSizePolicy(self,
-                                   QSizePolicy.Expanding,
-                                   QSizePolicy.Expanding)
+        FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
-
     def draw_me(self):
         pass
+
 import pandas as pd
 import matplotlib.dates as dates
 class MyStaticMplCanvas(MyMplCanvas):
@@ -42,22 +42,34 @@ class MyStaticMplCanvas(MyMplCanvas):
         self.InstrumentDate = None
         self.CumulativeDose = None
     """静态画布：一条正弦线"""
-    def draw_me(self):
-        pass
+    def draw_Init(self):
+        from pylab import mpl
+        mpl.rcParams['font.sans-serif'] = ['SimHei'] #指定默认字体
+
+        mpl.rcParams['axes.unicode_minus'] = False #解决保存图像是负号'-'显示为方块的问题
+        self.axes.set_title(u"实时")
+        self.axes.set_xlabel(u'时间')
+        self.axes.set_ylabel(u'累积剂量')
+
 
     def polt_update(self):
-        print(self.IntervalTime)
-        print(self.InstrumentDate)
-        print(self.CumulativeDose)
-        CumulativeDose = []
-        j = len(self.CumulativeDose)/8
-        for i in range(0,len(self.CumulativeDose)/8):
-            CumulativeDose.append(int(self.CumulativeDose[i*8:i*8+8],16))
-        len = self.CumulativeDose
-        idx = pd.date_range(end=self.InstrumentDate,periods=len(CumulativeDose),freq='S')
-        s = pd.Series(CumulativeDose,index=idx)
-        self.axes.plot_date(idx.to_pydatetime(),s,'-')
-        self.draw()
+        if self.IntervalTime and self.InstrumentDate and self.CumulativeDose:
+            CumulativeDose = []
+            Dose = self.CumulativeDose
+            for i in range(0,int(len(Dose)/8)):
+                # print(Dose[i*8:i*8+8])
+                CumulativeDose.append(int(Dose[i*8:i*8+8],16))
+
+            idx = pd.date_range(end=self.InstrumentDate,periods=len(CumulativeDose),freq='S')
+            s = pd.Series(CumulativeDose,index=idx)
+            self.axes.plot_date(idx.to_pydatetime(),s,'-')
+
+            self.axes.xaxis.set_minor_locator(dates.AutoDateLocator())
+            self.axes.xaxis.set_minor_formatter(dates.DateFormatter('\n\n%Y/%m/%d'))
+            self.axes.xaxis.grid(True,which='minor')
+            self.axes.yaxis.grid()
+            self.draw_Init()
+            self.draw()
         # t = arange(0.0, 10.0, 0.01)
         # s = sin(2*pi*t)
         # self.axes.plot(t, s)

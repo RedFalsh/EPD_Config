@@ -16,12 +16,16 @@ from my_serial import SerialHelper
 
 
 class mywindow(QMainWindow , Ui_MainWindow):
-    def __init__(self,qApp):
+    def __init__(self,parent =None):
         super(mywindow,self).__init__()
         self.setupUi(self)
-        self.qApp=qApp
+
         from pyqt_graph.IntervalTime import MyStaticMplCanvas
+        from pyqt_graph.IntervalTime import NavigationToolbar
+
         self.Plot_IntervalTime = MyStaticMplCanvas(self)
+        self.ntb = NavigationToolbar(self.Plot_IntervalTime,parent)
+        self.verticalLayout.addWidget(self.ntb)
         self.verticalLayout.addWidget(self.Plot_IntervalTime)
 
         icon = QIcon()
@@ -380,7 +384,7 @@ class mywindow(QMainWindow , Ui_MainWindow):
             # self.My_textBrowser.append_HTML('000000', self.Inf.Cmd_Set(self.Inf_CmdList))
             # print('ReadSend:'+self.Inf.Cmd_Set(self.Inf_CmdList))
             self.ser.write(self.Inf.Cmd_Set(self.Inf_CmdList), True)
-            print(self.Inf.Cmd_Set(self.Inf_CmdList))
+            # print(self.Inf.Cmd_Set(self.Inf_CmdList))
 
             self.Inf_ReadSuccess = False
     def Inf_Write_Send(self,CMD):
@@ -513,6 +517,7 @@ class mywindow(QMainWindow , Ui_MainWindow):
                         self.Inf_ReadSuccess = True
                         self.Inf_Read_Step += 1
                     if self.Inf.CMD[0:4] == self.Inf_ReadCmdList['IntervalTimeCumulativeDose'][0:4]:
+                        # print(self.Inf.DATA,self.Inf.CMD[0:4])
                         self.Plot_IntervalTime.CumulativeDose = self.Inf.DATA
                         self.Plot_IntervalTime.polt_update()
                         # self.lineEdit_R_CumulativeDose.setText(str(int(self.Inf.DATA,16)))
@@ -531,7 +536,7 @@ class mywindow(QMainWindow , Ui_MainWindow):
 
 import sys
 app = QApplication(sys.argv)
-form = mywindow(app)
+form = mywindow()
 form.show()
 app.exec_()
 # if __name__=="__main__":
