@@ -20,6 +20,9 @@ class mywindow(QMainWindow , Ui_MainWindow):
         super(mywindow,self).__init__()
         self.setupUi(self)
         self.qApp=qApp
+        from pyqt_graph.IntervalTime import MyStaticMplCanvas
+        self.Plot_IntervalTime = MyStaticMplCanvas(self)
+        self.verticalLayout.addWidget(self.Plot_IntervalTime)
 
         icon = QIcon()
         import os
@@ -105,170 +108,171 @@ class mywindow(QMainWindow , Ui_MainWindow):
         self.Inf_Str = ""
         'xxxxxxxxxxxxxxxxxx 0 start 1 len  2 epdnum   3usernum  4ntnum 5cpunum 6equ 7cmd cld 8d   9 crc 10end'
         self.Inf_CmdList = ['AA55','0000','00000000','00000000','0000','0000','00','000000','00','0000','BB66']
-#----------------------------自定义界面---------------------------------------#
-    def IconInit(self):
-        import qtawesome as qta
-        btnMenu_Close_icon = qta.icon('fa.minus', color='white',)
-        self.btnMenu_Min.setIcon(btnMenu_Close_icon)
-        btnMenu_Max_icon = qta.icon('fa.square-o', color='white',)
-        self.btnMenu_Max.setIcon(btnMenu_Max_icon)
-        btnMenu_Close_icon = qta.icon('fa.close', color='white',)
-        self.btnMenu_Close.setIcon(btnMenu_Close_icon)
 
-        from six import unichr
-        self.lab_Ico.setText(unichr(0xF26C))
-        self.lab_Ico.setFont(qta.font('fa', 16))
-
-    def StyleInit(self):
-        self.setMinimumHeight(400)
-        self.setMinimumWidth(300)
-        self.btnMenu_Close.clicked.connect(self.on_btnMenu_Close_clicked)
-        self.btnMenu_Max.clicked.connect(self.on_btnMenu_Max_clicked)
-        self.btnMenu_Min.clicked.connect(self.on_btnMenu_Min_clicked)
-
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint | Qt.WindowMinMaxButtonsHint)
-        self.location = self.geometry()
-        #设置鼠标可以跟踪
-        self.setMouseTracking(True)
-
-        self.max = False
-        self.mousePressed = False
-
-        self.mousePoint = QPoint()
-        self.mouseGloPoint = QPoint()
-
-        self.LEFTSPACE = 3
-        self.RIGHTSPACE = 3
-        self.BOTTOMSPCAE = 3
-
-        self.leftPress = False
-        self.rightPress = False
-        self.bottomPress = False
-
-        #安装事件监听器,让标题栏识别鼠标双击
-        self.lab_Title.installEventFilter(self)
-
-    def eventFilter(self,obj ,event):
-        '''事件过滤器响应，控件必须先安装，才能响应'''
-        if obj == self.lab_Title:
-            if event.type() == QEvent.MouseButtonDblClick:
-                self.on_btnMenu_Max_clicked()
-                return True
-            if event.type() == QEvent.MouseMove:
-                self.move(event.globalPos() - self.mousePoint)
-                event.accept()
-                return True
-        return QDialog.eventFilter(self,obj,event)
-
-    def mouseMoveEvent(self, e):
-        gloPoint = e.globalPos()
-        pos = e.pos()
-        xPos = pos.x()
-        yPos = pos.y()
-
-        if not self.mousePressed:
-            self.setCursor(Qt.ArrowCursor)
-            if xPos >= 0 and xPos < self.LEFTSPACE:#左边界
-                self.setCursor(Qt.SizeHorCursor)
-            if xPos > (self.width() - self.RIGHTSPACE):#右边界
-                self.setCursor(Qt.SizeHorCursor)
-            if yPos > (self.height() - self.BOTTOMSPCAE):#下边界
-                self.setCursor(Qt.SizeVerCursor)
-            if xPos >=0 and xPos < self.LEFTSPACE and yPos >(self.height()-self.RIGHTSPACE):#左下
-                self.setCursor(Qt.SizeBDiagCursor)
-            if xPos > (self.width() - self.RIGHTSPACE) and yPos > (self.height() - self.BOTTOMSPCAE):#右下
-                self.setCursor(Qt.SizeFDiagCursor)
-        else:
-            if self.leftPress and not self.bottomPress:
-                self.setCursor(Qt.SizeHorCursor)
-                tr = self.rMove.topRight()
-                if gloPoint.x()< tr.x() - self.minimumWidth():
-                    self.rMove.setLeft(gloPoint.x())
-                    self.setGeometry(self.rMove)
-                return
-            if self.rightPress and not self.bottomPress:
-                self.setCursor(Qt.SizeHorCursor)
-                tl = self.rMove.topLeft()
-                if gloPoint.x()> tl.x() + self.minimumWidth():
-                    self.rMove.setRight(gloPoint.x())
-                    self.setGeometry(self.rMove)
-                return
-            if self.bottomPress and not self.leftPress and not self.rightPress:
-                self.setCursor(Qt.SizeVerCursor)
-                bl = self.rMove.bottomLeft()
-                if gloPoint.y()> bl.y() - self.minimumHeight():
-                    self.rMove.setBottom(gloPoint.y())
-                    self.setGeometry(self.rMove)
-                return
-            if self.leftPress and self.bottomPress:
-                tr = self.rMove.topRight()
-                bl = self.rMove.bottomLeft()
-                self.setCursor(Qt.SizeBDiagCursor)
-                if gloPoint.x()< tr.x() - self.minimumWidth() and gloPoint.y()> bl.y() - self.minimumHeight():
-                    self.rMove.setLeft(gloPoint.x())
-                    self.rMove.setBottom(gloPoint.y())
-                    self.setGeometry(self.rMove)
-                return
-            if self.rightPress and self.bottomPress:
-                tl = self.rMove.topLeft()
-                bl = self.rMove.bottomLeft()
-                if gloPoint.x()> tl.x() + self.minimumWidth() and gloPoint.y()> bl.y() - self.minimumHeight():
-                    self.rMove.setRight(gloPoint.x())
-                    self.rMove.setBottom(gloPoint.y())
-                    self.setGeometry(self.rMove)
-                return
-        e.accept()
-
-    def mousePressEvent(self, e):
-        if (e.button() == Qt.LeftButton):
-            self.mousePressed = True
-            self.mousePoint = e.pos()
-            #记录按下的窗口矩形位置
-            rect = self.rect()
-            self.rMove = QRect(rect.topLeft() + self.pos(),
-                      rect.bottomRight() + self.pos())
-            #判断边界
-            pos = e.pos()
-            xPos = pos.x()
-            yPos = pos.y()
-            if xPos >= 0 and xPos < self.LEFTSPACE:#左边界
-                self.leftPress = True
-            if xPos > (self.width() - self.RIGHTSPACE):#右边界
-                self.rightPress = True
-            if yPos > (self.height() - self.BOTTOMSPCAE):#下边界
-                self.bottomPress = True
-
-            e.accept()
-
-    def mouseReleaseEvent(self, e):
-        self.mousePressed = False
-        self.leftPress = False
-        self.rightPress = False
-        self.bottomPress = False
-
-    def on_btnMenu_Close_clicked(self):
-        '''退出'''
-        self.qApp.exit()
-
-    def on_btnMenu_Max_clicked(self):
-        '''最大化'''
-        if self.max:
-            self.setGeometry(self.location)
-            # IconHelper::Instance()->SetIcon(self.btnMenu_Max, QChar(0xf096), 10);
-            self.btnMenu_Max.setToolTip("最大化")
-        else:
-            self.location = self.geometry()
-            desk = self.qApp.desktop()
-            deskRect = desk.availableGeometry()
-            self.setGeometry(deskRect)
-            # IconHelper::Instance()->SetIcon(self.btnMenu_Max, QChar(0xf079), 10);
-            self.btnMenu_Max.setToolTip("还原")
-        self.max = not self.max
-
-    def on_btnMenu_Min_clicked(self):
-        '''最小化'''
-        self.showMinimized()
-#------------------------------------------------------------------#
+# #----------------------------自定义界面---------------------------------------#
+#     def IconInit(self):
+#         import qtawesome as qta
+#         btnMenu_Close_icon = qta.icon('fa.minus', color='white',)
+#         self.btnMenu_Min.setIcon(btnMenu_Close_icon)
+#         btnMenu_Max_icon = qta.icon('fa.square-o', color='white',)
+#         self.btnMenu_Max.setIcon(btnMenu_Max_icon)
+#         btnMenu_Close_icon = qta.icon('fa.close', color='white',)
+#         self.btnMenu_Close.setIcon(btnMenu_Close_icon)
+#
+#         from six import unichr
+#         self.lab_Ico.setText(unichr(0xF26C))
+#         self.lab_Ico.setFont(qta.font('fa', 16))
+#
+#     def StyleInit(self):
+#         self.setMinimumHeight(400)
+#         self.setMinimumWidth(300)
+#         self.btnMenu_Close.clicked.connect(self.on_btnMenu_Close_clicked)
+#         self.btnMenu_Max.clicked.connect(self.on_btnMenu_Max_clicked)
+#         self.btnMenu_Min.clicked.connect(self.on_btnMenu_Min_clicked)
+#
+#         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint | Qt.WindowMinMaxButtonsHint)
+#         self.location = self.geometry()
+#         #设置鼠标可以跟踪
+#         self.setMouseTracking(True)
+#
+#         self.max = False
+#         self.mousePressed = False
+#
+#         self.mousePoint = QPoint()
+#         self.mouseGloPoint = QPoint()
+#
+#         self.LEFTSPACE = 3
+#         self.RIGHTSPACE = 3
+#         self.BOTTOMSPCAE = 3
+#
+#         self.leftPress = False
+#         self.rightPress = False
+#         self.bottomPress = False
+#
+#         #安装事件监听器,让标题栏识别鼠标双击
+#         self.lab_Title.installEventFilter(self)
+#
+#     def eventFilter(self,obj ,event):
+#         '''事件过滤器响应，控件必须先安装，才能响应'''
+#         if obj == self.lab_Title:
+#             if event.type() == QEvent.MouseButtonDblClick:
+#                 self.on_btnMenu_Max_clicked()
+#                 return True
+#             if event.type() == QEvent.MouseMove:
+#                 self.move(event.globalPos() - self.mousePoint)
+#                 event.accept()
+#                 return True
+#         return QDialog.eventFilter(self,obj,event)
+#
+#     def mouseMoveEvent(self, e):
+#         gloPoint = e.globalPos()
+#         pos = e.pos()
+#         xPos = pos.x()
+#         yPos = pos.y()
+#
+#         if not self.mousePressed:
+#             self.setCursor(Qt.ArrowCursor)
+#             if xPos >= 0 and xPos < self.LEFTSPACE:#左边界
+#                 self.setCursor(Qt.SizeHorCursor)
+#             if xPos > (self.width() - self.RIGHTSPACE):#右边界
+#                 self.setCursor(Qt.SizeHorCursor)
+#             if yPos > (self.height() - self.BOTTOMSPCAE):#下边界
+#                 self.setCursor(Qt.SizeVerCursor)
+#             if xPos >=0 and xPos < self.LEFTSPACE and yPos >(self.height()-self.RIGHTSPACE):#左下
+#                 self.setCursor(Qt.SizeBDiagCursor)
+#             if xPos > (self.width() - self.RIGHTSPACE) and yPos > (self.height() - self.BOTTOMSPCAE):#右下
+#                 self.setCursor(Qt.SizeFDiagCursor)
+#         else:
+#             if self.leftPress and not self.bottomPress:
+#                 self.setCursor(Qt.SizeHorCursor)
+#                 tr = self.rMove.topRight()
+#                 if gloPoint.x()< tr.x() - self.minimumWidth():
+#                     self.rMove.setLeft(gloPoint.x())
+#                     self.setGeometry(self.rMove)
+#                 return
+#             if self.rightPress and not self.bottomPress:
+#                 self.setCursor(Qt.SizeHorCursor)
+#                 tl = self.rMove.topLeft()
+#                 if gloPoint.x()> tl.x() + self.minimumWidth():
+#                     self.rMove.setRight(gloPoint.x())
+#                     self.setGeometry(self.rMove)
+#                 return
+#             if self.bottomPress and not self.leftPress and not self.rightPress:
+#                 self.setCursor(Qt.SizeVerCursor)
+#                 bl = self.rMove.bottomLeft()
+#                 if gloPoint.y()> bl.y() - self.minimumHeight():
+#                     self.rMove.setBottom(gloPoint.y())
+#                     self.setGeometry(self.rMove)
+#                 return
+#             if self.leftPress and self.bottomPress:
+#                 tr = self.rMove.topRight()
+#                 bl = self.rMove.bottomLeft()
+#                 self.setCursor(Qt.SizeBDiagCursor)
+#                 if gloPoint.x()< tr.x() - self.minimumWidth() and gloPoint.y()> bl.y() - self.minimumHeight():
+#                     self.rMove.setLeft(gloPoint.x())
+#                     self.rMove.setBottom(gloPoint.y())
+#                     self.setGeometry(self.rMove)
+#                 return
+#             if self.rightPress and self.bottomPress:
+#                 tl = self.rMove.topLeft()
+#                 bl = self.rMove.bottomLeft()
+#                 if gloPoint.x()> tl.x() + self.minimumWidth() and gloPoint.y()> bl.y() - self.minimumHeight():
+#                     self.rMove.setRight(gloPoint.x())
+#                     self.rMove.setBottom(gloPoint.y())
+#                     self.setGeometry(self.rMove)
+#                 return
+#         e.accept()
+#
+#     def mousePressEvent(self, e):
+#         if (e.button() == Qt.LeftButton):
+#             self.mousePressed = True
+#             self.mousePoint = e.pos()
+#             #记录按下的窗口矩形位置
+#             rect = self.rect()
+#             self.rMove = QRect(rect.topLeft() + self.pos(),
+#                       rect.bottomRight() + self.pos())
+#             #判断边界
+#             pos = e.pos()
+#             xPos = pos.x()
+#             yPos = pos.y()
+#             if xPos >= 0 and xPos < self.LEFTSPACE:#左边界
+#                 self.leftPress = True
+#             if xPos > (self.width() - self.RIGHTSPACE):#右边界
+#                 self.rightPress = True
+#             if yPos > (self.height() - self.BOTTOMSPCAE):#下边界
+#                 self.bottomPress = True
+#
+#             e.accept()
+#
+#     def mouseReleaseEvent(self, e):
+#         self.mousePressed = False
+#         self.leftPress = False
+#         self.rightPress = False
+#         self.bottomPress = False
+#
+#     def on_btnMenu_Close_clicked(self):
+#         '''退出'''
+#         self.qApp.exit()
+#
+#     def on_btnMenu_Max_clicked(self):
+#         '''最大化'''
+#         if self.max:
+#             self.setGeometry(self.location)
+#             # IconHelper::Instance()->SetIcon(self.btnMenu_Max, QChar(0xf096), 10);
+#             self.btnMenu_Max.setToolTip("最大化")
+#         else:
+#             self.location = self.geometry()
+#             desk = self.qApp.desktop()
+#             deskRect = desk.availableGeometry()
+#             self.setGeometry(deskRect)
+#             # IconHelper::Instance()->SetIcon(self.btnMenu_Max, QChar(0xf079), 10);
+#             self.btnMenu_Max.setToolTip("还原")
+#         self.max = not self.max
+#
+#     def on_btnMenu_Min_clicked(self):
+#         '''最小化'''
+#         self.showMinimized()
+# #-------------------------------------串口-----------------------------#
     def UpdateSerialShow(self):
         self.comboBox_ComNum.clear()
         port_list = list(serial.tools.list_ports.comports())
@@ -376,6 +380,8 @@ class mywindow(QMainWindow , Ui_MainWindow):
             # self.My_textBrowser.append_HTML('000000', self.Inf.Cmd_Set(self.Inf_CmdList))
             # print('ReadSend:'+self.Inf.Cmd_Set(self.Inf_CmdList))
             self.ser.write(self.Inf.Cmd_Set(self.Inf_CmdList), True)
+            print(self.Inf.Cmd_Set(self.Inf_CmdList))
+
             self.Inf_ReadSuccess = False
     def Inf_Write_Send(self,CMD):
         if self.Inf_WriteSuccess:
@@ -404,6 +410,9 @@ class mywindow(QMainWindow , Ui_MainWindow):
                     self.Inf_Read_Send(self.Inf_ReadCmdList['MaximumDoseRate'])
                 elif self.Inf_Read_Step == 6:
                     self.Inf_Read_Send(self.Inf_ReadCmdList['CumulativeDose'])
+                elif self.Inf_Read_Step == 7:
+                    # print(self.Inf_ReadCmdList['IntervalTimeCumulativeDose'])
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['IntervalTimeCumulativeDose'])
                 else:
                     pass
                 self.progressBarInfRead.setValue(self.Inf_Read_Step)
@@ -462,10 +471,6 @@ class mywindow(QMainWindow , Ui_MainWindow):
             else:
                 if self.Inf.CRCisCorrect(RecvCmd):
                     self.Inf.GetCmdList(RecvCmd)
-                    # print('InfRecv:'+RecvCmd)
-                    # self.My_textBrowser.append_HTML('ff0000', 'InfRecv:')
-                    # self.My_textBrowser.append_HTML('000000', RecvCmd)
-                    # self.textBrowser_RecvDataSerial.append('InfRecv:'+RecvCmd)
 
                     if self.Inf.CMD == self.Inf_WriteCmdList['Answer']:
                         self.Inf_Write_Step += 1
@@ -479,13 +484,16 @@ class mywindow(QMainWindow , Ui_MainWindow):
                         self.Inf_Read_Step += 1
                     if self.Inf.CMD == self.Inf_ReadCmdList['InstrumentDate']:
                         DATA = self.Inf.DATA
-                        self.lineEdit_R_InstrumentDate.setText(DATA[0:4]+'-'+DATA[4:6]+'-'+DATA[6:8]+' '+DATA[8:10]+':'+DATA[10:12]+':'+DATA[12:14])
+                        Time = DATA[0:4]+'-'+DATA[4:6]+'-'+DATA[6:8]+' '+DATA[8:10]+':'+DATA[10:12]+':'+DATA[12:14]
+                        self.lineEdit_R_InstrumentDate.setText(Time)
                         self.Inf_ReadSuccess = True
                         self.Inf_Read_Step += 1
+                        self.Plot_IntervalTime.InstrumentDate = Time
                     if self.Inf.CMD == self.Inf_ReadCmdList['IntervalTime']:
                         self.lineEdit_R_IntervalTime.setText(str(int(self.Inf.DATA,16)))
                         self.Inf_ReadSuccess = True
                         self.Inf_Read_Step += 1
+                        self.Plot_IntervalTime.IntervalTime = int(self.Inf.DATA,16)
                     if self.Inf.CMD == self.Inf_ReadCmdList['DoseThreshold']:
                         self.lineEdit_R_DoseThreshold.setText(str(int(self.Inf.DATA,16)))
                         self.Inf_ReadSuccess = True
@@ -502,6 +510,12 @@ class mywindow(QMainWindow , Ui_MainWindow):
                         self.Inf_Read_Step += 1
                     if self.Inf.CMD == self.Inf_ReadCmdList['CumulativeDose']:
                         self.lineEdit_R_CumulativeDose.setText(str(int(self.Inf.DATA,16)))
+                        self.Inf_ReadSuccess = True
+                        self.Inf_Read_Step += 1
+                    if self.Inf.CMD[0:4] == self.Inf_ReadCmdList['IntervalTimeCumulativeDose'][0:4]:
+                        self.Plot_IntervalTime.CumulativeDose = self.Inf.DATA
+                        self.Plot_IntervalTime.polt_update()
+                        # self.lineEdit_R_CumulativeDose.setText(str(int(self.Inf.DATA,16)))
                         self.Inf_ReadSuccess = True
                         self.Inf_Read_Step += 1
 
