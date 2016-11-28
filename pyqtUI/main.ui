@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>689</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,6 +44,9 @@
       <property name="bottomMargin">
        <number>9</number>
       </property>
+      <property name="spacing">
+       <number>6</number>
+      </property>
       <item row="1" column="1">
        <widget class="QGroupBox" name="groupBox_9">
         <property name="title">
@@ -53,19 +56,6 @@
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
-         <item row="0" column="0">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="1" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
@@ -139,7 +129,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEdit_21">
+          <widget class="QLineEdit" name="lineEdit_R_InstrumentNumber">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -172,7 +162,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEdit_22">
+          <widget class="QLineEdit" name="lineEdit_R_UserNumber">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -190,121 +180,6 @@
           </widget>
          </item>
          <item row="4" column="0">
-          <widget class="QLabel" name="label_26">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>剂量阈值(uSv)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="lineEdit_23">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>14</pointsize>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_25">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>剂量率阈值(uSv)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLineEdit" name="lineEdit_24">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>14</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_24">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>时间间隔存储(s)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLineEdit" name="lineEdit_25">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>14</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
           <widget class="QLabel" name="label_28">
            <property name="minimumSize">
             <size>
@@ -325,8 +200,123 @@
            </property>
           </widget>
          </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="lineEdit_R_InstrumentDate">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_24">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Sans</family>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>间隔时间存储(s)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLineEdit" name="lineEdit_R_IntervalTime">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_26">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Sans</family>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>剂量阈值(uSv)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="lineEdit_R_DoseThreshold">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_25">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Sans</family>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>剂量率阈值(uSv/h)</string>
+           </property>
+          </widget>
+         </item>
          <item row="7" column="1">
-          <widget class="QLineEdit" name="lineEdit_26">
+          <widget class="QLineEdit" name="lineEdit_R_DoseRateThreshold">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -344,79 +334,65 @@
           </widget>
          </item>
          <item row="8" column="0">
-          <widget class="QLabel" name="label_20">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string>累积剂量清零</string>
+            <string>最大剂量率(uSv/h)</string>
            </property>
           </widget>
          </item>
          <item row="8" column="1">
-          <widget class="QLineEdit" name="lineEdit_29">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
+          <widget class="QLineEdit" name="lineEdit_R_MaximumDoseRate">
            <property name="font">
             <font>
              <family>Arial</family>
              <pointsize>14</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
             </font>
            </property>
           </widget>
          </item>
          <item row="9" column="0">
-          <widget class="QLabel" name="label_21">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
+          <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>仪器出厂编号</string>
+            <string>最大剂量率时刻</string>
            </property>
           </widget>
          </item>
          <item row="9" column="1">
-          <widget class="QLineEdit" name="lineEdit_30">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
+          <widget class="QLineEdit" name="lineEdit_R_MaximumDoseRateTime">
            <property name="font">
             <font>
              <family>Arial</family>
              <pointsize>14</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>累积剂量</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QLineEdit" name="lineEdit_R_CumulativeDose">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
             </font>
            </property>
           </widget>
@@ -430,19 +406,6 @@
          <string>串口操作</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="1">
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="1" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
@@ -467,6 +430,19 @@
            </item>
           </layout>
          </item>
+         <item row="1" column="1">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item row="0" column="0">
           <spacer name="verticalSpacer_3">
            <property name="orientation">
@@ -483,6 +459,45 @@
            </property>
           </spacer>
          </item>
+         <item row="1" column="3">
+          <widget class="QLineEdit" name="lineEdit_InstrumentFactoryNumber">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="label_17">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Sans</family>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>仪器出厂编号：</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -495,19 +510,6 @@
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
-         <item row="0" column="0">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="1" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
@@ -601,7 +603,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEdit_9">
+          <widget class="QLineEdit" name="lineEdit_W_InstrumentNumber">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -632,7 +634,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEdit_10">
+          <widget class="QLineEdit" name="lineEdit_W_UserNumber">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -650,123 +652,6 @@
           </widget>
          </item>
          <item row="4" column="0">
-          <widget class="QLabel" name="label_19">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>剂量阈值(uSv)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="lineEdit_11">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>14</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_14">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>剂量率阈值(uSv)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLineEdit" name="lineEdit_12">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>14</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_12">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>时间间隔存储(s)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLineEdit" name="lineEdit_13">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>14</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
           <widget class="QLabel" name="label_18">
            <property name="minimumSize">
             <size>
@@ -787,8 +672,8 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
-          <widget class="QLineEdit" name="lineEdit_14">
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="lineEdit_W_InstrumentDate">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -805,7 +690,98 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="13" column="0" colspan="2">
+          <spacer name="verticalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_19">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Sans</family>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>剂量阈值(uSv)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_14">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Sans</family>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>剂量率阈值(uSv/h)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="lineEdit_W_DoseThreshold">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLineEdit" name="lineEdit_W_DoseRateThreshold">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>14</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
           <widget class="QLabel" name="label_15">
            <property name="minimumSize">
             <size>
@@ -826,8 +802,8 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
-          <widget class="QLineEdit" name="lineEdit_17">
+         <item row="9" column="1">
+          <widget class="QLineEdit" name="lineEdit_W_CumulativeDoseReset">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -844,8 +820,8 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="label_17">
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_12">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -861,12 +837,12 @@
             </font>
            </property>
            <property name="text">
-            <string>仪器出厂编号</string>
+            <string>间隔时间存储(s)</string>
            </property>
           </widget>
          </item>
-         <item row="9" column="1">
-          <widget class="QLineEdit" name="lineEdit_18">
+         <item row="5" column="1">
+          <widget class="QLineEdit" name="lineEdit_W_IntervalTime">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -882,6 +858,19 @@
             </font>
            </property>
           </widget>
+         </item>
+         <item row="0" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>

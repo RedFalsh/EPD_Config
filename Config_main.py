@@ -13,10 +13,6 @@ import binascii
 from pyqtUI.main import Ui_MainWindow
 from INF_HELPER import inf_helper
 from my_serial import SerialHelper
-import xlrd
-import queue
-
-import xdrlib
 
 
 class mywindow(QMainWindow , Ui_MainWindow):
@@ -24,7 +20,6 @@ class mywindow(QMainWindow , Ui_MainWindow):
         super(mywindow,self).__init__()
         self.setupUi(self)
         self.qApp=qApp
-
 
         icon = QIcon()
         import os
@@ -44,8 +39,8 @@ class mywindow(QMainWindow , Ui_MainWindow):
         self.pushButton_InfReadInformation.clicked.connect(self.InfStartReadInformation)
         self.pushButton_InfWriteInformation.clicked.connect(self.InfStartWriteInformation)
         self.pushButton_Style.clicked.connect(self.Inf_ParameterFormat)
-        self.progressBarInfRead.setRange(0, 5)
-        self.progressBarInfWrite.setRange(0, 5)
+        self.progressBarInfRead.setRange(0, 6)
+        self.progressBarInfWrite.setRange(0,6)
 
         self.Inf = inf_helper()
 
@@ -62,7 +57,7 @@ class mywindow(QMainWindow , Ui_MainWindow):
         self.Inf_WriteCmdList = {
             'Answer':'000100',
             'IntervalTimeCumulativeDose': '080100',
-            'CumulativeDose': '080200',
+            'CumulativeDoseReset': '000900',
             'MaximumDoseRate': '080300',
             'InstrumentNumber': '000500',
             'SuperRangeIdentification': '080500',
@@ -87,10 +82,29 @@ class mywindow(QMainWindow , Ui_MainWindow):
             'IntervalTime': '080B00',
             'TunnelBigRead':'080C00',
             'TunnelSmallRead': '080C01',}
-
+        self.lineEdit_W = [
+            self.lineEdit_W_InstrumentNumber,
+            self.lineEdit_W_UserNumber,
+            self.lineEdit_W_InstrumentDate,
+            self.lineEdit_W_IntervalTime,
+            self.lineEdit_W_DoseThreshold,
+            self.lineEdit_W_DoseRateThreshold
+        ]
+        self.lineEdit_R = [
+            self.lineEdit_R_InstrumentNumber,
+            self.lineEdit_R_UserNumber,
+            self.lineEdit_R_InstrumentDate,
+            self.lineEdit_R_IntervalTime,
+            self.lineEdit_R_DoseThreshold,
+            self.lineEdit_R_DoseRateThreshold,
+            self.lineEdit_R_MaximumDoseRate,
+            self.lineEdit_R_MaximumDoseRateTime,
+            self.lineEdit_R_CumulativeDose
+        ]
         self.Inf_Str = ""
         'xxxxxxxxxxxxxxxxxx 0 start 1 len  2 epdnum   3usernum  4ntnum 5cpunum 6equ 7cmd cld 8d   9 crc 10end'
         self.Inf_CmdList = ['AA55','0000','00000000','00000000','0000','0000','00','000000','00','0000','BB66']
+#----------------------------自定义界面---------------------------------------#
     def IconInit(self):
         import qtawesome as qta
         btnMenu_Close_icon = qta.icon('fa.minus', color='white',)
@@ -103,7 +117,6 @@ class mywindow(QMainWindow , Ui_MainWindow):
         from six import unichr
         self.lab_Ico.setText(unichr(0xF26C))
         self.lab_Ico.setFont(qta.font('fa', 16))
-
 
     def StyleInit(self):
         self.setMinimumHeight(400)
@@ -254,10 +267,7 @@ class mywindow(QMainWindow , Ui_MainWindow):
     def on_btnMenu_Min_clicked(self):
         '''最小化'''
         self.showMinimized()
-
-
-
-
+#------------------------------------------------------------------#
     def UpdateSerialShow(self):
         self.comboBox_ComNum.clear()
         port_list = list(serial.tools.list_ports.comports())
@@ -329,7 +339,7 @@ class mywindow(QMainWindow , Ui_MainWindow):
             if not self.ser.alive:
                 QMessageBox.warning(self,'错误','红外串口没有打开，不能配置！',QMessageBox.Yes)
                 return
-            if not self.lineEdit_10.text():
+            if not self.lineEdit_W_InstrumentNumber.text():
                 QMessageBox.warning(self,'错误','配置信息为空，不能配置！',QMessageBox.Yes)
                 return
             self.Inf_Str = ""
@@ -341,17 +351,21 @@ class mywindow(QMainWindow , Ui_MainWindow):
 
     def InfStartReadInformation(self):
         '''仪器读取,标志位设置以及命令对应初始化'''
-        try:
-            if not self.ser.alive:
-                QMessageBox.warning(self,'错误','红外串口没有打开，不能读取！',QMessageBox.Yes)
-                return
-            self.Inf_Str = ""
-            self.Inf_Read_Step = 0
-            self.Inf_ReadSuccess = True
-            self.Inf_isRead = True
-            self.SetInfStyle('WriteShow',True)
-        except:
-            QMessageBox.warning(self, '错误', '红外串口没有打开，不能读取！', QMessageBox.Yes)
+
+        if not self.ser.alive:
+            QMessageBox.warning(self,'错误','红外串口没有打开，不能读取！',QMessageBox.Yes)
+            return
+        else:
+            try:
+                self.Inf_Str = ""
+                self.Inf_Read_Step = 0
+                self.Inf_ReadSuccess = True
+                self.Inf_isRead = True
+                for lineEdit in self.lineEdit_R:
+                    lineEdit.setText('')
+
+            except Exception as e:
+                QMessageBox.warning(self, '错误', '红外串口没有打开，不能读取！', QMessageBox.Yes)
 
     def Inf_Read_Send(self,CMD):
         if self.Inf_ReadSuccess:
@@ -373,47 +387,55 @@ class mywindow(QMainWindow , Ui_MainWindow):
             self.Inf_WriteSuccess = False
     def Thread_InfWork(self):
         self.WriteisHex = True
-        time.sleep(0.1)
-        if self.Inf_isRead:
-            if self.Inf_Read_Step == 0:
-                self.Inf_Read_Send(self.Inf_ReadCmdList['InstrumentNumber'])
-            elif self.Inf_Read_Step == 1:
-                self.Inf_Read_Send(self.Inf_ReadCmdList['DoseThreshold'])
-            elif self.Inf_Read_Step == 2:
-                self.Inf_Read_Send(self.Inf_ReadCmdList['DoseRateThreshold'])
-            elif self.Inf_Read_Step == 3:
-                self.Inf_Read_Send(self.Inf_ReadCmdList['IntervalTime'])
-            elif self.Inf_Read_Step == 4:
-                self.Inf_Read_Send(self.Inf_ReadCmdList['InstrumentDate'])
-            elif self.Inf_Read_Step == 5:
-                self.Inf_Read_Send(self.Inf_ReadCmdList['CalibrationFactor'])
-            else:
-                pass
-            self.progressBarInfRead.setValue(self.Inf_Read_Step)
-        if self.Inf_isWrite:
-            self.Inf_CmdList[2] = '00000000'
-            self.Inf_CmdList[3] = '00000000'
-            if self.Inf_Write_Step == 0:
-                self.Inf_CmdList[2] = hex(int(self.lineEdit_9.text())).replace('0x','').zfill(8)
-                self.Inf_CmdList[3] = hex(int(self.lineEdit_10.text())).replace('0x','').zfill(8)
-                self.Inf_Write_Send(self.Inf_WriteCmdList['InstrumentNumber'])
-            elif self.Inf_Write_Step == 1:
-                self.Inf_CmdList[8] = hex(int(self.lineEdit_11.text())).replace('0x','').zfill(8)
-                self.Inf_Write_Send(self.Inf_WriteCmdList['DoseThreshold'])
-            elif self.Inf_Write_Step == 2:
-                self.Inf_CmdList[8] = hex(int(self.lineEdit_12.text())).replace('0x','').zfill(8)
-                self.Inf_Write_Send(self.Inf_WriteCmdList['DoseRateThreshold'])
-            elif self.Inf_Write_Step == 3:
-                self.Inf_CmdList[8] = hex(int(self.lineEdit_13.text())).replace('0x','').zfill(8)
-                self.Inf_Write_Send(self.Inf_WriteCmdList['IntervalTime'])
-            elif self.Inf_Write_Step == 4:
-                Time = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
-                TimeShow = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
-                self.lineEdit_14.setText(TimeShow)
-                self.Inf_CmdList[8] = Time
-                self.Inf_Write_Send(self.Inf_WriteCmdList['InstrumentDate'])
-            else:
-                pass
+        try:
+            if self.Inf_isRead:#读取仪器信息
+                if self.Inf_Read_Step == 0:
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['InstrumentNumber'])
+                elif self.Inf_Read_Step == 1:
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['InstrumentDate'])
+                elif self.Inf_Read_Step == 2:
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['IntervalTime'])
+                elif self.Inf_Read_Step == 3:
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['DoseThreshold'])
+                elif self.Inf_Read_Step == 4:
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['DoseRateThreshold'])
+                elif self.Inf_Read_Step == 5:
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['MaximumDoseRate'])
+                elif self.Inf_Read_Step == 6:
+                    self.Inf_Read_Send(self.Inf_ReadCmdList['CumulativeDose'])
+                else:
+                    pass
+                self.progressBarInfRead.setValue(self.Inf_Read_Step)
+
+            if self.Inf_isWrite:#写入仪器信息
+                self.Inf_CmdList[2] = '00000000'
+                self.Inf_CmdList[3] = '00000000'
+                if self.Inf_Write_Step == 0:
+                    self.Inf_CmdList[2] = hex(int(self.lineEdit_W_InstrumentNumber.text())).replace('0x','').zfill(8)
+                    self.Inf_CmdList[3] = hex(int(self.lineEdit_W_UserNumber.text())).replace('0x','').zfill(8)
+                    self.Inf_Write_Send(self.Inf_WriteCmdList['InstrumentNumber'])
+                elif self.Inf_Write_Step == 1:
+                    Time = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
+                    TimeShow = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+                    self.lineEdit_W_InstrumentDate.setText(TimeShow)
+                    self.Inf_CmdList[8] = Time
+                    self.Inf_Write_Send(self.Inf_WriteCmdList['InstrumentDate'])
+                elif self.Inf_Write_Step == 2:
+                    self.Inf_CmdList[8] = hex(int(self.lineEdit_W_IntervalTime.text())).replace('0x','').zfill(8)
+                    self.Inf_Write_Send(self.Inf_WriteCmdList['IntervalTime'])
+                elif self.Inf_Write_Step == 3:
+                    self.Inf_CmdList[8] = hex(int(self.lineEdit_W_DoseThreshold.text())).replace('0x','').zfill(8)
+                    self.Inf_Write_Send(self.Inf_WriteCmdList['DoseThreshold'])
+                elif self.Inf_Write_Step == 4:
+                    self.Inf_CmdList[8] = hex(int(self.lineEdit_W_DoseRateThreshold.text())).replace('0x','').zfill(8)
+                    self.Inf_Write_Send(self.Inf_WriteCmdList['DoseRateThreshold'])
+                elif self.Inf_Write_Step == 5:
+                    # self.Inf_CmdList[8] = hex(int(self.lineEdit_W_CumulativeDoseReset.text())).replace('0x','').zfill(8)
+                    self.Inf_Write_Send(self.Inf_WriteCmdList['CumulativeDoseReset'])
+                else:
+                    pass
+        except:
+            pass
 
     def InfRecvCmdHex(self,receivedata):
         self.Inf_Str = str(self.Inf_Str + receivedata).upper()
@@ -447,91 +469,50 @@ class mywindow(QMainWindow , Ui_MainWindow):
                     if self.Inf.CMD == self.Inf_WriteCmdList['Answer']:
                         self.Inf_Write_Step += 1
                         self.Inf_WriteSuccess = True
-                        if self.Inf_Write_Step <= 5:
-                            self.progressBarInfWrite.setValue(self.Inf_Write_Step)
-
+                        # if self.Inf_Write_Step <= 5:
+                        self.progressBarInfWrite.setValue(self.Inf_Write_Step)
                     if self.Inf.CMD == self.Inf_ReadCmdList['InstrumentNumber']:
-                        self.lineEdit_21.setText(str(int(self.Inf.EPD_NUM, 16)))
-                        self.lineEdit_22.setText(str(int(self.Inf.USER_NUM, 16)))
-                        self.Inf_ReadSuccess = True
-                        self.Inf_Read_Step += 1
-                    if self.Inf.CMD == self.Inf_ReadCmdList['DoseThreshold']:
-                        self.lineEdit_23.setText(str(int(self.Inf.DATA,16)))
-                        self.Inf_ReadSuccess = True
-                        self.Inf_Read_Step += 1
-                    if self.Inf.CMD == self.Inf_ReadCmdList['DoseRateThreshold']:
-                        self.lineEdit_24.setText(str(int(self.Inf.DATA,16)))
-                        self.Inf_ReadSuccess = True
-                        self.Inf_Read_Step += 1
-                    if self.Inf.CMD == self.Inf_ReadCmdList['IntervalTime']:
-                        self.lineEdit_25.setText(str(int(self.Inf.DATA,16)))
+                        self.lineEdit_R_InstrumentNumber.setText(str(int(self.Inf.EPD_NUM, 16)))
+                        self.lineEdit_R_UserNumber.setText(str(int(self.Inf.USER_NUM, 16)))
                         self.Inf_ReadSuccess = True
                         self.Inf_Read_Step += 1
                     if self.Inf.CMD == self.Inf_ReadCmdList['InstrumentDate']:
                         DATA = self.Inf.DATA
-                        self.lineEdit_26.setText(DATA[0:4]+'-'+DATA[4:6]+'-'+DATA[6:8]+' '+DATA[8:10]+':'+DATA[10:12]+':'+DATA[12:14])
-                        self.Inf_ReadSuccess = False
+                        self.lineEdit_R_InstrumentDate.setText(DATA[0:4]+'-'+DATA[4:6]+'-'+DATA[6:8]+' '+DATA[8:10]+':'+DATA[10:12]+':'+DATA[12:14])
+                        self.Inf_ReadSuccess = True
+                        self.Inf_Read_Step += 1
+                    if self.Inf.CMD == self.Inf_ReadCmdList['IntervalTime']:
+                        self.lineEdit_R_IntervalTime.setText(str(int(self.Inf.DATA,16)))
+                        self.Inf_ReadSuccess = True
+                        self.Inf_Read_Step += 1
+                    if self.Inf.CMD == self.Inf_ReadCmdList['DoseThreshold']:
+                        self.lineEdit_R_DoseThreshold.setText(str(int(self.Inf.DATA,16)))
+                        self.Inf_ReadSuccess = True
+                        self.Inf_Read_Step += 1
+                    if self.Inf.CMD == self.Inf_ReadCmdList['DoseRateThreshold']:
+                        self.lineEdit_R_DoseRateThreshold.setText(str(int(self.Inf.DATA,16)))
+                        self.Inf_ReadSuccess = True
+                        self.Inf_Read_Step += 1
+                    if self.Inf.CMD == self.Inf_ReadCmdList['MaximumDoseRate']:
+                        self.lineEdit_R_MaximumDoseRate.setText(str(int(self.Inf.DATA[0:8],16)))
+                        DATA = self.Inf.DATA[8:22]
+                        self.lineEdit_R_MaximumDoseRateTime.setText(DATA[0:4]+'-'+DATA[4:6]+'-'+DATA[6:8]+' '+DATA[8:10]+':'+DATA[10:12]+':'+DATA[12:14])
+                        self.Inf_ReadSuccess = True
+                        self.Inf_Read_Step += 1
+                    if self.Inf.CMD == self.Inf_ReadCmdList['CumulativeDose']:
+                        self.lineEdit_R_CumulativeDose.setText(str(int(self.Inf.DATA,16)))
+                        self.Inf_ReadSuccess = True
                         self.Inf_Read_Step += 1
 
-                    if self.Inf.CMD == self.Inf_WriteCmdList['CalibrationFactor']:
-                        self.CalibrationFactor_show(self.Inf.DATA)
-
-                    if self.Inf.CMD == self.Inf_ReadCmdList['TunnelBigRead'] :
-                        self.TunnelTableDeal(self.Inf.CMD, self.Inf.DATA)
-                    if self.Inf.CMD == self.Inf_ReadCmdList['TunnelSmallRead']:
-                        self.TunnelTableDeal(self.Inf.CMD, self.Inf.DATA)
-
-
     def Inf_ParameterFormat(self):
-        self.StrData = "11100001,150102001,100,10,100,2016-04-24 11:12:13,0,0,0,0,0"
-        InformationList = self.StrData.split(',')
         Time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
-        self.lineEdit_9.setText(InformationList[0])
-        self.lineEdit_10.setText(InformationList[1])
-        self.lineEdit_11.setText(InformationList[2])
-        self.lineEdit_12.setText(InformationList[3])
-        self.lineEdit_13.setText(InformationList[4])
-        self.lineEdit_14.setText(Time)
-        # self.lineEdit_15.setText(InformationList[6])
-        # self.lineEdit_16.setText(InformationList[7])
-        # self.lineEdit_17.setText(InformationList[8])
-        # self.lineEdit_18.setText(InformationList[9])
-    def SetInfStyle(self, style, isNull):
-        self.StrData = ""
-        if style == 'ReadShow':
-            if not isNull:
-                self.StrData = "11100001,150102001,100,10,100,2016-04-24 11:12:13,0,0,0,0,0"
-            else:
-                self.StrData = "0,0,0,0,0,0,0,0,0,0,0"
-            InformationList = self.StrData.split(',')
-            Time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
-            self.lineEdit_9.setText(InformationList[0])
-            self.lineEdit_10.setText(InformationList[1])
-            self.lineEdit_11.setText(InformationList[2])
-            self.lineEdit_12.setText(InformationList[3])
-            self.lineEdit_13.setText(InformationList[4])
-            self.lineEdit_14.setText(Time)
-            self.lineEdit_15.setText(InformationList[6])
-            self.lineEdit_16.setText(InformationList[7])
-            self.lineEdit_17.setText(InformationList[8])
-            self.lineEdit_18.setText(InformationList[9])
-        if style == 'WriteShow':
-            if not isNull:
-                self.StrData = "11100001,150102001,100,10,100,2016-04-24 11:12:13,0,0,0,0,0"
-            else:
-                self.StrData = "0,0,0,0,0,0,0,0,0,0,0"
-            InformationList = self.StrData.split(',')
-
-            self.lineEdit_21.setText(InformationList[0])
-            self.lineEdit_22.setText(InformationList[1])
-            self.lineEdit_23.setText(InformationList[2])
-            self.lineEdit_24.setText(InformationList[3])
-            self.lineEdit_25.setText(InformationList[4])
-            self.lineEdit_26.setText(InformationList[5])
-            # self.lineEdit_27.setText(InformationList[6])
-            # self.lineEdit_28.setText(InformationList[7])
-            # self.lineEdit_29.setText(InformationList[8])
-            # self.lineEdit_30.setText(InformationList[9])
+        self.lineEdit_W_InstrumentNumber.setText('11100001')
+        self.lineEdit_W_UserNumber.setText('150102001')
+        self.lineEdit_W_InstrumentDate.setText(Time)
+        self.lineEdit_W_IntervalTime.setText('100')
+        self.lineEdit_W_DoseThreshold.setText('100')
+        self.lineEdit_W_DoseRateThreshold.setText('10')
+        self.lineEdit_W_CumulativeDoseReset.setText('0')
 
 import sys
 app = QApplication(sys.argv)
